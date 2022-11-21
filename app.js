@@ -1,4 +1,5 @@
 let isCapsLocked = false
+let langCanChange = true
 let lang = 'en'
 const langs = {
     en: {
@@ -17,7 +18,7 @@ const langs = {
             ['Space']
         ]
     },
-    en: {
+    fa: {
         normalMode: [
             ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
             ['Tab', 'ض', 'ص', 'ث', 'ق', 'ف', 'غ', 'ع', 'ه', 'خ', 'ح', 'ج', 'چ', 'پ'],
@@ -35,17 +36,35 @@ const langs = {
     },
 }
 document.getElementById('inputArea').addEventListener('focus', () => {
+    window.navigator.language = "en"
     renderKeyboard(langs[lang].normalMode)
 })
 document.getElementById('inputArea').addEventListener('blur', () => {
     const keyboardArea = document.getElementById('keyboardArea')
     keyboardArea.innerHTML = ""
 })
-window.addEventListener('keypress', (e) => {
-    if(e.altKey && e.shiftKey) {
-        lang = lang === "en" ? "fa" : "en"
+window.addEventListener('keyup', (e) => {
+    langCanChange = true
+    if (e.getModifierState('CapsLock')) {
+        renderKeyboard(langs[lang].capMode)
+    } else {
+        renderKeyboard(langs[lang].normalMode)
     }
-    console.log("L: ", e.altKey && e.shiftKey)
+})
+
+window.addEventListener('keypress', (e) => {
+    console.log(e.key.test(/[\u0750-\u077F]/))
+    if(e.key.test(/[\u0750-\u077F]/)) {
+        lang = 'fa'
+    } else {
+        lang = 'en'
+    }
+})
+window.addEventListener('keydown', (e) => {
+    // if (e.altKey && e.shiftKey && langCanChange) {
+    //     lang = lang === "en" ? 'fa' : 'en'
+    //     langCanChange = false
+    // }
     if (e.getModifierState('CapsLock')) {
         renderKeyboard(langs[lang].capMode)
     } else {
