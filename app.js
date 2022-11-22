@@ -35,14 +35,6 @@ const langs = {
         ]
     },
 }
-document.getElementById('inputArea').addEventListener('focus', () => {
-    window.navigator.language = "en"
-    renderKeyboard(langs[lang].normalMode)
-})
-document.getElementById('inputArea').addEventListener('blur', () => {
-    const keyboardArea = document.getElementById('keyboardArea')
-    keyboardArea.innerHTML = ""
-})
 window.addEventListener('keyup', (e) => {
     langCanChange = true
     if (e.getModifierState('CapsLock')) {
@@ -52,23 +44,23 @@ window.addEventListener('keyup', (e) => {
     }
 })
 
-window.addEventListener('keypress', (e) => {
-    console.log(e.key.test(/[\u0750-\u077F]/))
-    if(e.key.test(/[\u0750-\u077F]/)) {
-        lang = 'fa'
-    } else {
-        lang = 'en'
-    }
-})
 window.addEventListener('keydown', (e) => {
-    // if (e.altKey && e.shiftKey && langCanChange) {
-    //     lang = lang === "en" ? 'fa' : 'en'
-    //     langCanChange = false
-    // }
+    if(e.altKey && e.shiftKey && langCanChange) {
+        lang = lang === 'en' ? 'fa' : 'en'
+        langCanChange = false
+    }
     if (e.getModifierState('CapsLock')) {
         renderKeyboard(langs[lang].capMode)
     } else {
         renderKeyboard(langs[lang].normalMode)
+    }
+})
+window.addEventListener('keypress', (e) => {
+    if(e.key.match(/[a-zA-z]/g) && lang === 'fa') {
+        lang = 'en'
+    } else if(e.key.match(/^[\u0600-\u06FF\s]+$/) && lang === 'en') {
+        lang = 'fa'
+
     }
 })
 function renderKeyboard(keys) {
@@ -99,3 +91,5 @@ function getClassName(key) {
             return 'key'
     }
 }
+
+renderKeyboard(langs.en.normalMode)
